@@ -142,8 +142,15 @@ pipeline {
           script: "printf \$(git rev-parse --short ${GIT_COMMIT})",
           returnStdout: true
         )
+        // We must use a space, otherwise the value would be null.
+        E2E_LONG_RUN = " "
       }
       steps {
+        script {
+          if (env.BRANCH_NAME != 'staging' && env.BRANCH_NAME != 'trying') {
+            env.E2E_LONG_RUN = "-l"
+          }
+        }
         // Build images (REGISTRY is set in jenkin's global configuration).
         // Note: We might want to build and test dev images that have more
         // assertions instead but that complicates e2e tests a bit.
@@ -152,7 +159,7 @@ pipeline {
         sh 'nix-store --delete /nix/store/*docker-image*'
         withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
           sh 'kubectl get nodes -o wide'
-          sh "nix-shell --run './scripts/e2e-test.sh -d /dev/nvme1n1 -t ${env.GIT_COMMIT_SHORT} -r ${env.REGISTRY}'"
+          sh "nix-shell --run './scripts/e2e-test.sh -d /dev/nvme1n1 -t ${env.GIT_COMMIT_SHORT} -r ${env.REGISTRY} ${env.E2E_LONG_RUN}'"
         }
       }
     }
