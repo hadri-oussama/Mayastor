@@ -29,8 +29,8 @@ import (
 	clientset "k8s.io/client-go/kubernetes"
 	restclientset "k8s.io/client-go/rest"
 	"k8s.io/kubernetes/test/e2e/framework"
-	"mayastor-csi-e2e/driver"
-	"mayastor-csi-e2e/testsuites"
+	"e2e-basic/csi/driver"
+	"e2e-basic/csi/testsuites"
 )
 
 // TODO: Make configurable
@@ -61,7 +61,7 @@ var _ = ginkgo.Describe("Dynamic Provisioning", func() {
 	ginkgo.BeforeEach(func() {
 		checkPodsRestart := testCmd{
 			command:  "sh",
-			args:     []string{"test/csi-e2e/check_driver_pods_restart.sh"},
+			args:     []string{"test/e2e/csi/check_driver_pods_restart.sh"},
 			startLog: "Check driver pods for restarts",
 			endLog:   "Check successful",
 		}

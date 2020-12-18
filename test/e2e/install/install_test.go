@@ -245,7 +245,7 @@ var _ = Describe("Mayastor setup", func() {
 })
 
 var _ = BeforeSuite(func(done Done) {
-	logf.SetLogger(zap.LoggerTo(GinkgoWriter, true))
+	logf.SetLogger(zap.New(zap.UseDevMode(true), zap.WriteTo(GinkgoWriter)))
 
 	By("bootstrapping test environment")
 	useCluster := true
@@ -271,7 +271,7 @@ var _ = BeforeSuite(func(done Done) {
 
 	mgrSyncCtx, mgrSyncCtxCancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer mgrSyncCtxCancel()
-	if synced := k8sManager.GetCache().WaitForCacheSync(mgrSyncCtx.Done()); !synced {
+	if synced := k8sManager.GetCache().WaitForCacheSync(mgrSyncCtx); !synced {
 		fmt.Println("Failed to sync")
 	}
 
